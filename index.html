@@ -741,6 +741,16 @@ async function tmdb(path) {
   return res.json();
 }
 
+async function tmdbPages(basePath, pageCount) {
+  const requests = [];
+  for (let p = 1; p <= pageCount; p++) {
+    const sep = basePath.includes('?') ? '&' : '?';
+    requests.push(tmdb(`${basePath}${sep}page=${p}`));
+  }
+  const responses = await Promise.all(requests);
+  return responses.flatMap(r => r.results || []);
+}
+
 function attachGenreNames(movies) {
   return (movies || []).map(m => ({
     ...m,
@@ -781,8 +791,8 @@ async function loadHome() {
   const trendingRail = document.getElementById('trendingRail');
   const watchlistRail = document.getElementById('watchlistRail');
   try {
-    const trendingData = await tmdb('/trending/movie/week');
-    const trending = attachGenreNames(trendingData.results).slice(0, 8);
+    const trendingResults = await tmdbPages('/trending/movie/week', 3);
+    const trending = attachGenreNames(trendingResults);
     trendingRail.innerHTML = '';
     trending.forEach(m => trendingRail.appendChild(posterCard(m, false, false)));
 
@@ -801,8 +811,8 @@ async function loadHome() {
       }
     }
 
-    const popularData = await tmdb('/movie/popular');
-    const popular = attachGenreNames(popularData.results).slice(0, 5);
+    const popularResults = await tmdbPages('/movie/popular', 2);
+    const popular = attachGenreNames(popularResults);
     watchlistRail.innerHTML = '';
     popular.forEach(m => watchlistRail.appendChild(posterCard(m, false, true)));
   } catch (e) {
@@ -917,7 +927,7 @@ async function renderSearchResults() {
       searchResults.innerHTML = '<div class="results-empty">No films match that search.</div>';
       return;
     }
-    results.slice(0, 12).forEach(m => searchResults.appendChild(posterCard(m, true, false)));
+    results.forEach(m => searchResults.appendChild(posterCard(m, true, false)));
   } catch (e) {
     searchResults.innerHTML = '<div class="results-empty">Couldn\'t load results — check your connection.</div>';
   }
@@ -944,6 +954,8 @@ searchInput.addEventListener('input', () => {
 document.getElementById('langSelect').addEventListener('change', async (e) => {
   TMDB_LANG = e.target.value;
   showToast('Updating language…');
+  await loadGenres();
+  buildRegionChips();
   await loadHome();
   await renderSearchResults();
 });
