@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MARQUEE — Movie App Concept</title>
+<style>
+/* Paste this into CodePen's CSS panel */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root{
+  --curtain:#2B0F14;
+  --charcoal:#1A1210;
+  --charcoal-2:#241713;
+  --gold:#E8B94A;
+  --gold-dim:#9C8A63;
+  --cream:#F2E8D5;
+  --velvet:#7A1F2B;
+  --velvet-2:#4A1620;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+body{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at 50% 0%, #1c1512 0%, #0a0706 70%);
+  font-family:'Inter', sans-serif;
+  padding:40px 16px;
+}
+
+/* ---------- Phone frame ---------- */
+.device{
+  width:390px;
+  max-width:100%;
+  height:800px;
+  background:var(--curtain);
+  border-radius:46px;
+  border:10px solid #0d0908;
+  box-shadow:0 30px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(232,185,74,.08);
+  overflow:hidden;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+.device::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:3px 3px;
+  pointer-events:none;
+  z-index:5;
+}
+
+/* ---------- Marquee header ---------- */
+.marquee-header{ padding:16px 20px 14px; text-align:center; }
+.bulb-row{ display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:2px; }
+.bulb{
+  width:5px; height:5px;
+  border-radius:50%;
+  background:var(--gold-dim);
+  box-shadow:0 0 0 rgba(232,185,74,0);
+  animation:chase 2.4s infinite ease-in-out;
+}
+@keyframes chase{
+  0%,100%{ background:var(--gold-dim); box-shadow:0 0 0 rgba(232,185,74,0); }
+  50%{ background:var(--gold); box-shadow:0 0 8px 2px rgba(232,185,74,.65); }
+}
+.brand{
+  font-family:'Playfair Display', serif;
+  font-weight:900;
+  font-size:30px;
+  letter-spacing:6px;
+  color:var(--cream);
+  margin:2px 0 2px;
+}
+.tagline{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--gold-dim);
+}
+
+/* ---------- Search bar ---------- */
+.search-wrap{ padding:14px 20px 6px; }
+.search-slot{
+  display:flex; align-items:center; gap:10px;
+  background:var(--charcoal);
+  border:1px solid rgba(232,185,74,.18);
+  border-radius:14px;
+  padding:11px 14px;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+.search-slot:focus-within{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(232,185,74,.12); }
+.search-slot svg{ flex-shrink:0; opacity:.6; }
+.search-slot input{
+  background:none; border:none; outline:none;
+  color:var(--cream);
+  font-family:'Inter', sans-serif;
+  font-size:13px;
+  width:100%;
+}
+.search-slot input::placeholder{ color:var(--gold-dim); }
+.search-wrap.is-hidden{ display:none; }
+
+/* ---------- Scroll body + panel switching ---------- */
+.screen{ flex:1; overflow-y:auto; padding-bottom:14px; }
+.screen::-webkit-scrollbar{ display:none; }
+.screen-panel{ display:none; }
+.screen-panel.active{ display:block; }
+.panel-title{
+  font-family:'Playfair Display', serif;
+  font-weight:700;
+  font-size:16px;
+  color:var(--cream);
+  padding:16px 20px 0;
+}
+
+/* ---------- Hero / Now Showing ---------- */
+.hero-section{ padding:14px 20px 4px; }
+.hero-card{
+  position:relative;
+  border-radius:20px;
+  overflow:hidden;
+  background:linear-gradient(155deg, var(--velvet) 0%, var(--velvet-2) 45%, var(--charcoal) 100%);
+  padding:22px 18px 20px 30px;
+  min-height:230px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  box-shadow:0 14px 30px -10px rgba(122,31,43,.5);
+}
+.hero-card::before{
+  content:"";
+  position:absolute; left:0; top:0; bottom:0; width:14px;
+  background:repeating-linear-gradient(180deg, #0d0908 0px, #0d0908 8px, transparent 8px, transparent 12px);
+}
+.hero-card::after{
+  content:"";
+  position:absolute; left:3px; top:0; bottom:0; width:8px;
+  background-image:radial-gradient(circle, #0a0706 2.6px, transparent 2.7px);
+  background-size:8px 12px;
+  background-position:0 4px;
+}
+.ribbon{
+  align-self:flex-start;
+  font-family:'JetBrains Mono', monospace;
+  font-size:9.5px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--curtain);
+  background:var(--gold);
+  padding:4px 9px;
+  border-radius:4px;
+  margin-bottom:auto;
+  margin-top:2px;
+}
+.hero-title{
+  font-family:'Playfair Display', serif;
+  font-weight:900;
+  font-size:26px;
+  line-height:1.08;
+  color:var(--cream);
+  margin-top:14px;
+}
+.hero-meta{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  color:var(--gold-dim);
+  letter-spacing:.5px;
+  margin-top:8px;
+  display:flex; align-items:center; gap:8px;
+}
+.hero-meta .stars{ color:var(--gold); }
+.hero-actions{ display:flex; align-items:center; gap:10px; margin-top:16px; }
+.btn-play{
+  display:flex; align-items:center; gap:7px;
+  background:var(--gold);
+  color:var(--curtain);
+  border:none;
+  font-family:'Inter', sans-serif;
+  font-weight:700;
+  font-size:13px;
+  padding:11px 18px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.btn-play:hover{ box-shadow:0 6px 16px rgba(232,185,74,.35); }
+.btn-play:active{ transform:scale(.96); }
+.btn-icon{
+  width:38px; height:38px;
+  border-radius:50%;
+  border:1px solid rgba(242,232,213,.3);
+  background:rgba(242,232,213,.06);
+  color:var(--cream);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  font-size:16px;
+  transition:background .15s ease, transform .12s ease;
+}
+.btn-icon:active{ transform:scale(.92); }
+.btn-icon.saved{ background:var(--gold); color:var(--curtain); border-color:var(--gold); }
+
+/* ---------- Rails (Trending / Watchlist) ---------- */
+.rail{ margin-top:24px; }
+.rail-head{ display:flex; justify-content:space-between; align-items:baseline; padding:0 20px; margin-bottom:12px; }
+.rail-title{ font-family:'Playfair Display', serif; font-weight:700; font-size:16px; color:var(--cream); }
+.rail-more{ font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--gold-dim); letter-spacing:1px; text-transform:uppercase; background:none; border:none; cursor:pointer; padding:0; }
+.rail-empty{
+  padding:0 20px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  color:var(--gold-dim);
+  opacity:.7;
+}
+.rail-track{ display:flex; gap:12px; overflow-x:auto; padding:0 20px 4px; scroll-snap-type:x proximity; }
+.rail-track::-webkit-scrollbar{ display:none; }
+
+.poster{ scroll-snap-align:start; flex:0 0 auto; width:118px; }
+.poster-art{
+  width:118px; height:168px;
+  border-radius:12px;
+  position:relative;
+  overflow:hidden;
+  display:flex; align-items:flex-end;
+  padding:8px;
+  box-shadow:0 8px 18px -8px rgba(0,0,0,.6);
+}
+.poster-rating{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10px;
+  color:var(--cream);
+  background:rgba(10,7,6,.55);
+  border-radius:5px;
+  padding:2px 6px;
+}
+.poster-name{ font-family:'Inter', sans-serif; font-weight:600; font-size:12px; color:var(--cream); margin-top:8px; line-height:1.25; }
+.poster-genre{ font-family:'JetBrains Mono', monospace; font-size:9.5px; color:var(--gold-dim); margin-top:2px; text-transform:uppercase; letter-spacing:.5px; }
+
+.bookmark{
+  position:absolute; top:7px; right:7px;
+  width:22px; height:22px;
+  border-radius:50%;
+  background:rgba(10,7,6,.55);
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px;
+  color:var(--cream);
+  cursor:pointer;
+  transition:background .15s ease, color .15s ease;
+}
+.bookmark.added{ background:var(--gold); color:var(--curtain); }
+
+/* ---------- Search screen ---------- */
+.chip-row{ display:flex; gap:8px; overflow-x:auto; padding:14px 20px 4px; }
+.chip-row::-webkit-scrollbar{ display:none; }
+.chip{
+  flex:0 0 auto;
+  font-family:'JetBrains Mono', monospace;
+  font-size:10.5px;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  color:var(--gold-dim);
+  background:var(--charcoal);
+  border:1px solid rgba(232,185,74,.18);
+  border-radius:999px;
+  padding:7px 14px;
+  cursor:pointer;
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.chip.active{ background:var(--gold); color:var(--curtain); border-color:var(--gold); }
+
+.results-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:16px 20px 4px; }
+.grid-poster .poster-art{ width:100%; height:150px; }
+.results-empty{
+  grid-column:1 / -1;
+  padding:30px 10px;
+  text-align:center;
+  color:var(--gold-dim);
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:.5px;
+}
+
+/* ---------- Tickets screen ---------- */
+.segmented{ display:flex; margin:14px 20px 4px; background:var(--charcoal); border-radius:12px; padding:4px; gap:4px; }
+.seg-btn{
+  flex:1;
+  background:none; border:none;
+  font-family:'Inter', sans-serif;
+  font-weight:600;
+  font-size:12px;
+  color:var(--gold-dim);
+  padding:9px 0;
+  border-radius:9px;
+  cursor:pointer;
+  transition:background .15s ease, color .15s ease;
+}
+.seg-btn.active{ background:var(--gold); color:var(--curtain); }
+
+.ticket-list{ padding:16px 20px 4px; display:flex; flex-direction:column; gap:14px; }
+.ticket-card{ display:flex; background:var(--charcoal); border-radius:14px; overflow:hidden; box-shadow:0 8px 18px -10px rgba(0,0,0,.5); }
+.ticket-main{ flex:1; padding:14px 12px 14px 16px; }
+.ticket-movie{ font-family:'Playfair Display', serif; font-weight:700; font-size:15px; color:var(--cream); }
+.ticket-meta{ font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--gold-dim); margin-top:6px; line-height:1.7; }
+.ticket-meta span{ color:var(--cream); }
+.ticket-stub{
+  width:68px;
+  flex:0 0 auto;
+  border-left:2px dashed rgba(232,185,74,.3);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:6px;
+  padding:10px 6px;
+  background-image:repeating-linear-gradient(90deg, rgba(232,185,74,.35) 0px, rgba(232,185,74,.35) 2px, transparent 2px, transparent 5px);
+  background-size:100% 60%;
+  background-repeat:no-repeat;
+  background-position:center 8px;
+}
+.ticket-seat{
+  font-family:'JetBrains Mono', monospace;
+  font-weight:600;
+  font-size:13px;
+  color:var(--gold);
+  background:var(--curtain);
+  padding:3px 7px;
+  border-radius:5px;
+}
+
+/* ---------- Profile screen ---------- */
+.member-card{
+  margin:16px 20px 0;
+  border-radius:16px;
+  border:1px solid rgba(232,185,74,.35);
+  background:linear-gradient(155deg, var(--velvet-2) 0%, var(--charcoal) 70%);
+  padding:18px;
+}
+.member-card-top{ display:flex; justify-content:space-between; font-family:'JetBrains Mono', monospace; font-size:9.5px; letter-spacing:1.5px; color:var(--gold); }
+.member-since{ color:var(--gold-dim); }
+.member-name{ font-family:'Playfair Display', serif; font-weight:700; font-size:20px; color:var(--cream); margin-top:16px; }
+.member-number{ font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:1.5px; color:var(--gold-dim); margin-top:6px; }
+.upgrade-btn{
+  display:block; width:100%; margin-top:16px;
+  background:var(--gold); color:var(--curtain); border:none;
+  font-family:'Inter', sans-serif; font-weight:700; font-size:13px;
+  padding:11px 0; border-radius:999px; cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.upgrade-btn:hover{ box-shadow:0 6px 16px rgba(232,185,74,.35); }
+.upgrade-btn:active{ transform:scale(.97); }
+.upgrade-btn.is-member{ background:none; border:1px solid rgba(232,185,74,.4); color:var(--gold); }
+
+.stats-row{ display:flex; margin:18px 20px 0; background:var(--charcoal); border-radius:14px; overflow:hidden; }
+.stat{ flex:1; text-align:center; padding:14px 4px; border-right:1px solid rgba(232,185,74,.12); }
+.stat:last-child{ border-right:none; }
+.stat-num{ display:block; font-family:'Playfair Display', serif; font-weight:900; font-size:19px; color:var(--gold); }
+.stat-label{ display:block; font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--gold-dim); margin-top:4px; }
+
+.settings-list{ margin:18px 20px 0; border-radius:14px; overflow:hidden; background:var(--charcoal); }
+.settings-item{
+  width:100%;
+  display:flex; align-items:center; gap:12px;
+  background:none; border:none;
+  border-bottom:1px solid rgba(232,185,74,.1);
+  padding:13px 14px;
+  color:var(--cream);
+  font-family:'Inter', sans-serif;
+  font-size:13px;
+  cursor:pointer;
+  text-align:left;
+}
+.settings-item:last-child{ border-bottom:none; }
+.settings-item svg{ opacity:.75; flex-shrink:0; }
+.settings-item .chev{ margin-left:auto; opacity:.4; }
+
+.switch{ position:relative; display:inline-block; width:40px; height:23px; margin-left:auto; flex-shrink:0; }
+.switch input{ opacity:0; width:0; height:0; }
+.switch-track{
+  position:absolute; cursor:pointer; inset:0;
+  background:rgba(242,232,213,.15);
+  border-radius:999px;
+  transition:background .2s ease;
+}
+.switch-track::before{
+  content:"";
+  position:absolute; height:17px; width:17px;
+  left:3px; bottom:3px;
+  background:var(--cream);
+  border-radius:50%;
+  transition:transform .2s ease;
+}
+.switch input:checked + .switch-track{ background:var(--gold); }
+.switch input:checked + .switch-track::before{ transform:translateX(17px); background:var(--curtain); }
+
+.signout-btn{
+  display:block;
+  width:calc(100% - 40px);
+  margin:18px 20px 4px;
+  background:none;
+  border:1px solid rgba(122,31,43,.6);
+  color:#c9707c;
+  font-family:'Inter', sans-serif;
+  font-weight:600;
+  font-size:13px;
+  padding:12px 0;
+  border-radius:12px;
+  cursor:pointer;
+  transition:background .15s ease;
+}
+.signout-btn:hover{ background:rgba(122,31,43,.15); }
+
+.caption{
+  text-align:center;
+  color:var(--gold-dim);
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:1px;
+  margin-top:18px;
+}
+
+/* ---------- Bottom nav (ticket stub) ---------- */
+.stub-line{ position:relative; height:0; margin:6px 0 0; border-top:2px dashed rgba(232,185,74,.28); }
+.stub-line::before,.stub-line::after{ content:""; position:absolute; top:-9px; width:18px; height:18px; border-radius:50%; background:#0a0706; }
+.stub-line::before{ left:-19px; }
+.stub-line::after{ right:-19px; }
+
+.bottom-nav{ display:flex; justify-content:space-around; align-items:center; padding:12px 10px 16px; background:var(--curtain); }
+.nav-item{
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  color:var(--gold-dim);
+  background:none; border:none;
+  font-family:'JetBrains Mono', monospace;
+  font-size:9.5px;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:color .15s ease;
+}
+.nav-item svg{ width:19px; height:19px; }
+.nav-item.active{ color:var(--gold); }
+
+@media (prefers-reduced-motion: reduce){
+  .bulb{ animation:none; }
+  .btn-play, .btn-icon{ transition:none; }
+}
+
+.toast{
+  position:absolute;
+  left:50%; bottom:90px;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--charcoal);
+  border:1px solid rgba(232,185,74,.3);
+  color:var(--cream);
+  font-family:'Inter', sans-serif;
+  font-size:12.5px;
+  padding:10px 16px;
+  border-radius:999px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease, transform .25s ease;
+  z-index:20;
+  white-space:nowrap;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+.lang-row{
+  display:flex; align-items:center; gap:12px;
+  margin:18px 20px 0;
+  background:var(--charcoal);
+  border-radius:14px;
+  padding:13px 14px;
+  color:var(--cream);
+  font-family:'Inter', sans-serif;
+  font-size:13px;
+}
+.lang-row svg{ opacity:.75; flex-shrink:0; }
+.lang-select{
+  background:var(--curtain);
+  color:var(--gold);
+  border:1px solid rgba(232,185,74,.3);
+  border-radius:8px;
+  padding:6px 8px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+}
+
+.poster{ cursor:pointer; }
+
+.modal-overlay{
+  position:absolute; inset:0;
+  background:rgba(10,7,6,.85);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:30;
+}
+.modal-overlay.active{ display:flex; }
+.modal-card{
+  width:100%;
+  max-height:80%;
+  background:var(--charcoal);
+  border-radius:20px 20px 0 0;
+  padding:20px;
+  overflow-y:auto;
+  position:relative;
+}
+.modal-close{
+  position:absolute; top:14px; right:14px;
+  width:28px; height:28px;
+  border-radius:50%;
+  background:rgba(242,232,213,.08);
+  border:none;
+  color:var(--cream);
+  font-size:14px;
+  cursor:pointer;
+}
+.modal-poster{
+  width:80px; height:114px;
+  border-radius:10px;
+  background-size:cover;
+  background-position:center;
+  background-color:var(--curtain);
+  margin-bottom:12px;
+}
+.modal-title{
+  font-family:'Playfair Display', serif;
+  font-weight:700;
+  font-size:18px;
+  color:var(--cream);
+}
+.modal-meta{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  color:var(--gold-dim);
+  margin-top:4px;
+  margin-bottom:14px;
+}
+.watch-label{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-top:14px;
+  margin-bottom:8px;
+}
+.provider-row{ display:flex; gap:10px; flex-wrap:wrap; }
+.provider{ display:flex; flex-direction:column; align-items:center; gap:4px; width:56px; }
+.provider img{ width:44px; height:44px; border-radius:10px; }
+.provider span{ font-size:9px; color:var(--gold-dim); text-align:center; font-family:'Inter', sans-serif; }
+.justwatch-link{
+  display:block;
+  margin-top:16px;
+  color:var(--gold);
+  font-family:'Inter', sans-serif;
+  font-size:12px;
+  text-decoration:underline;
+}
+
+</style>
+</head>
+<body>
+<!-- Paste this into CodePen's HTML panel -->
+<div class="device" id="device">
+  <div class="marquee-header">
+    <div class="bulb-row" id="bulbRow"></div>
+    <div class="brand">MARQUEE</div>
+    <div class="tagline" data-i18n="tagline">now showing</div>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-slot">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F2E8D5" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search films, directors, genres">
+    </div>
+  </div>
+
+  <div class="screen">
+
+    <!-- HOME -->
+    <div class="screen-panel active" data-panel="home">
+      <div class="hero-section">
+        <div class="hero-card">
+          <span class="ribbon" data-i18n="nowShowingBadge">Now Showing</span>
+          <div class="hero-title">The Last<br>Ember</div>
+          <div class="hero-meta">
+            <span>Drama</span>&nbsp;·&nbsp;<span>2h 11m</span>&nbsp;·&nbsp;<span class="stars">★ 8.4</span>
+          </div>
+          <div class="hero-actions">
+            <button class="btn-play">▶ <span data-i18n="playTrailer">Play Trailer</span></button>
+            <button class="btn-icon" id="heroSave">+</button>
+            <button class="btn-icon" id="heroWatch" title="Where to Watch">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rail">
+        <div class="rail-head">
+          <span class="rail-title" data-i18n="trending">Trending This Week</span>
+          <button class="rail-more" data-i18n="seeAll">See all</button>
+        </div>
+        <div class="rail-track" id="trendingRail"></div>
+      </div>
+
+      <div class="rail">
+        <div class="rail-head">
+          <span class="rail-title" data-i18n="continueWatching">Continue Watching</span>
+          <button class="rail-more" data-i18n="seeAll">See all</button>
+        </div>
+        <div class="rail-track" id="continueRail"></div>
+      </div>
+
+      <div class="rail">
+        <div class="rail-head">
+          <span class="rail-title" data-i18n="watchlist">Your Watchlist</span>
+          <button class="rail-more" data-i18n="seeAll">See all</button>
+        </div>
+        <div class="rail-track" id="watchlistRail"></div>
+      </div>
+
+      <div class="caption">★ <span data-i18n="admitOne">ADMIT ONE — SCROLL FOR MORE</span></div>
+      <div class="caption" style="margin-top:6px; opacity:.6;" data-i18n="tmdbCredit">Movie data provided by TMDB</div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="screen-panel" data-panel="search">
+      <div class="panel-title" data-i18n="browseGenre">Browse by Genre</div>
+      <div class="chip-row" id="genreChips"></div>
+      <div class="panel-title" style="padding-top:6px;" data-i18n="browseRegion">Browse by Region</div>
+      <div class="chip-row" id="regionChips"></div>
+      <div class="results-grid" id="searchResults"></div>
+    </div>
+
+    <!-- TICKETS -->
+    <div class="screen-panel" data-panel="tickets">
+      <div class="panel-title" data-i18n="yourTickets">Your Tickets</div>
+      <div class="segmented" id="ticketSeg">
+        <button class="seg-btn active" data-seg="upcoming" data-i18n="upcoming">Upcoming</button>
+        <button class="seg-btn" data-seg="past" data-i18n="past">Past</button>
+      </div>
+      <div class="ticket-list" id="ticketList"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="screen-panel" data-panel="profile">
+      <div class="member-card">
+        <div class="member-card-top">
+          <span id="memberTier">FREE MEMBER</span>
+          <span class="member-since" data-i18n="sinceLabel">SINCE 2024</span>
+        </div>
+        <div class="member-name">Alex Rivera</div>
+        <div class="member-number">MQ · 8841 2205</div>
+        <button class="upgrade-btn" id="upgradeBtn">Upgrade to Gold — $4.99/mo</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat"><span class="stat-num">142</span><span class="stat-label" data-i18n="filmsLabel">Films</span></div>
+        <div class="stat"><span class="stat-num">318h</span><span class="stat-label" data-i18n="watchedLabel">Watched</span></div>
+        <div class="stat"><span class="stat-num">27</span><span class="stat-label" data-i18n="reviewsLabel">Reviews</span></div>
+      </div>
+
+      <div class="lang-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20 15.3 15.3 0 010-20z"/></svg>
+        <span style="flex:1;" data-i18n="languageLabel">Language</span>
+        <select id="langSelect" class="lang-select">
+          <option value="en-US">English</option>
+          <option value="fr-FR">French</option>
+          <option value="es-ES">Spanish</option>
+          <option value="pt-BR">Portuguese</option>
+          <option value="ar-SA">Arabic</option>
+          <option value="hi-IN">Hindi</option>
+          <option value="ko-KR">Korean</option>
+          <option value="ja-JP">Japanese</option>
+          <option value="zh-CN">Chinese</option>
+          <option value="de-DE">German</option>
+          <option value="it-IT">Italian</option>
+          <option value="ru-RU">Russian</option>
+          <option value="tr-TR">Turkish</option>
+          <option value="id-ID">Indonesian</option>
+          <option value="th-TH">Thai</option>
+          <option value="vi-VN">Vietnamese</option>
+          <option value="sw-KE">Swahili</option>
+          <option value="yo-NG">Yoruba</option>
+        </select>
+      </div>
+
+      <div class="settings-list">
+        <div class="settings-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span data-i18n="notifications">Notifications</span>
+          <label class="switch">
+            <input type="checkbox" id="notifToggle" checked>
+            <span class="switch-track"></span>
+          </label>
+        </div>
+        <button class="settings-item" id="paymentMethodsItem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <span data-i18n="paymentMethods">Payment Methods</span>
+          <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="settings-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3M6 9l6 6 6-6"/><path d="M4 21h16"/></svg>
+          <span data-i18n="downloads">Wi-Fi Only Downloads</span>
+          <label class="switch">
+            <input type="checkbox" id="wifiToggle" checked>
+            <span class="switch-track"></span>
+          </label>
+        </div>
+        <a class="settings-item" id="helpSupportItem" href="mailto:support@marqueeapp.com?subject=Marquee%20Support" style="text-decoration:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2 2-2 3.5"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
+          <span data-i18n="helpSupport">Help &amp; Support</span>
+          <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
+      </div>
+
+      <button class="signout-btn" data-i18n="signOut">Sign Out</button>
+    </div>
+
+  </div>
+
+  <div class="stub-line"></div>
+  <div class="toast" id="toast"></div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-poster" id="modalPoster"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-meta" id="modalMeta"></div>
+      <div id="modalWatch"></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-item active" data-tab="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      <span data-i18n="navHome">Home</span>
+    </button>
+    <button class="nav-item" data-tab="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span data-i18n="navSearch">Search</span>
+    </button>
+    <button class="nav-item" data-tab="tickets">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9a2 2 0 002-2V6a1 1 0 011-1h12a1 1 0 011 1v1a2 2 0 002 2v6a2 2 0 00-2 2v1a1 1 0 01-1 1H6a1 1 0 01-1-1v-1a2 2 0 00-2-2z"/></svg>
+      <span data-i18n="navTickets">Tickets</span>
+    </button>
+    <button class="nav-item" data-tab="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+      <span data-i18n="navProfile">Profile</span>
+    </button>
+  </div>
+</div>
+
+<script>
+// Paste this into CodePen's JS panel
+
+// ---- Marquee chasing bulbs ----
+const bulbRow = document.getElementById('bulbRow');
+for (let i = 0; i < 16; i++) {
+  const b = document.createElement('span');
+  b.className = 'bulb';
+  b.style.animationDelay = (i * 0.09) + 's';
+  bulbRow.appendChild(b);
+}
+
+// ---- TMDB integration ----
+const TMDB_API_KEY = '770d4e860339fb671dbff72bd5c10e01';
+const TMDB_BASE = 'https://api.themoviedb.org/3';
+const TMDB_IMG = 'https://image.tmdb.org/t/p/w342';
+const TMDB_BACKDROP = 'https://image.tmdb.org/t/p/w780';
+
+let genreMap = {};
+let TMDB_LANG = 'en-US';
+
+// ---- UI translations (separate from movie data — this covers app text itself) ----
+const uiText = {
+  'en-US': { tagline:'now showing', searchPlaceholder:'Search films, directors, genres', nowShowingBadge:'Now Showing', playTrailer:'Play Trailer', trending:'Trending This Week', seeAll:'See all', watchlist:'Your Watchlist', admitOne:'ADMIT ONE — SCROLL FOR MORE', tmdbCredit:'Movie data provided by TMDB', browseGenre:'Browse by Genre', browseRegion:'Browse by Region', yourTickets:'Your Tickets', upcoming:'Upcoming', past:'Past', freeMember:'FREE MEMBER', goldMember:'GOLD MEMBER', sinceLabel:'SINCE 2024', upgradeGold:'Upgrade to Gold — $4.99/mo', manageSub:'Manage Subscription', languageLabel:'Language', notifications:'Notifications', paymentMethods:'Payment Methods', downloads:'Downloads', helpSupport:'Help & Support', signOut:'Sign Out', navHome:'Home', navSearch:'Search', navTickets:'Tickets', navProfile:'Profile', continueWatching:'Continue Watching', filmsLabel:'Films', watchedLabel:'Watched', reviewsLabel:'Reviews', watchlistEmpty:'Tap + on any movie to add it here', continueEmpty:'Movies you check out will show up here' },
+  'fr-FR': { tagline:"à l'affiche", searchPlaceholder:'Rechercher films, réalisateurs, genres', nowShowingBadge:"À l'affiche", playTrailer:'Voir la bande-annonce', trending:'Tendances cette semaine', seeAll:'Tout voir', watchlist:'Votre liste', admitOne:'ENTRÉE — FAITES DÉFILER POUR PLUS', tmdbCredit:'Données fournies par TMDB', browseGenre:'Parcourir par genre', browseRegion:'Parcourir par région', yourTickets:'Vos billets', upcoming:'À venir', past:'Passés', freeMember:'MEMBRE GRATUIT', goldMember:'MEMBRE OR', sinceLabel:'DEPUIS 2024', upgradeGold:'Passer à Or — 4,99 $/mois', manageSub:"Gérer l'abonnement", languageLabel:'Langue', notifications:'Notifications', paymentMethods:'Moyens de paiement', downloads:'Téléchargements', helpSupport:'Aide et support', signOut:'Déconnexion', navHome:'Accueil', navSearch:'Recherche', navTickets:'Billets', navProfile:'Profil' },
+  'es-ES': { tagline:'en cartelera', searchPlaceholder:'Buscar películas, directores, géneros', nowShowingBadge:'En cartelera', playTrailer:'Ver tráiler', trending:'Tendencias esta semana', seeAll:'Ver todo', watchlist:'Tu lista', admitOne:'ENTRADA — DESLIZA PARA MÁS', tmdbCredit:'Datos proporcionados por TMDB', browseGenre:'Explorar por género', browseRegion:'Explorar por región', yourTickets:'Tus entradas', upcoming:'Próximas', past:'Pasadas', freeMember:'MIEMBRO GRATIS', goldMember:'MIEMBRO ORO', sinceLabel:'DESDE 2024', upgradeGold:'Mejorar a Oro — $4.99/mes', manageSub:'Gestionar suscripción', languageLabel:'Idioma', notifications:'Notificaciones', paymentMethods:'Métodos de pago', downloads:'Descargas', helpSupport:'Ayuda y soporte', signOut:'Cerrar sesión', navHome:'Inicio', navSearch:'Buscar', navTickets:'Entradas', navProfile:'Perfil' },
+  'pt-BR': { tagline:'em cartaz', searchPlaceholder:'Buscar filmes, diretores, gêneros', nowShowingBadge:'Em cartaz', playTrailer:'Ver trailer', trending:'Tendências da semana', seeAll:'Ver tudo', watchlist:'Sua lista', admitOne:'ENTRADA — DESLIZE PARA MAIS', tmdbCredit:'Dados fornecidos pelo TMDB', browseGenre:'Explorar por gênero', browseRegion:'Explorar por região', yourTickets:'Seus ingressos', upcoming:'Próximos', past:'Anteriores', freeMember:'MEMBRO GRÁTIS', goldMember:'MEMBRO OURO', sinceLabel:'DESDE 2024', upgradeGold:'Assinar Ouro — $4,99/mês', manageSub:'Gerenciar assinatura', languageLabel:'Idioma', notifications:'Notificações', paymentMethods:'Métodos de pagamento', downloads:'Downloads', helpSupport:'Ajuda e suporte', signOut:'Sair', navHome:'Início', navSearch:'Buscar', navTickets:'Ingressos', navProfile:'Perfil' },
+  'ar-SA': { tagline:'يُعرض الآن', searchPlaceholder:'ابحث عن أفلام، مخرجين، أنواع', nowShowingBadge:'يُعرض الآن', playTrailer:'تشغيل الإعلان', trending:'الأكثر رواجًا هذا الأسبوع', seeAll:'عرض الكل', watchlist:'قائمتك', admitOne:'تذكرة دخول — مرر لمزيد', tmdbCredit:'بيانات الأفلام من TMDB', browseGenre:'تصفح حسب النوع', browseRegion:'تصفح حسب المنطقة', yourTickets:'تذاكرك', upcoming:'القادمة', past:'السابقة', freeMember:'عضوية مجانية', goldMember:'عضوية ذهبية', sinceLabel:'منذ 2024', upgradeGold:'الترقية للذهبية — $4.99/شهريًا', manageSub:'إدارة الاشتراك', languageLabel:'اللغة', notifications:'الإشعارات', paymentMethods:'طرق الدفع', downloads:'التنزيلات', helpSupport:'المساعدة والدعم', signOut:'تسجيل الخروج', navHome:'الرئيسية', navSearch:'بحث', navTickets:'التذاكر', navProfile:'الملف الشخصي' },
+  'hi-IN': { tagline:'अभी प्रदर्शित', searchPlaceholder:'फ़िल्में, निर्देशक, शैलियाँ खोजें', nowShowingBadge:'अभी प्रदर्शित', playTrailer:'ट्रेलर देखें', trending:'इस सप्ताह ट्रेंडिंग', seeAll:'सभी देखें', watchlist:'आपकी वॉचलिस्ट', admitOne:'प्रवेश टिकट — और के लिए स्क्रॉल करें', tmdbCredit:'मूवी डेटा TMDB द्वारा प्रदान किया गया', browseGenre:'शैली के अनुसार ब्राउज़ करें', browseRegion:'क्षेत्र के अनुसार ब्राउज़ करें', yourTickets:'आपके टिकट', upcoming:'आगामी', past:'पिछले', freeMember:'फ्री सदस्य', goldMember:'गोल्ड सदस्य', sinceLabel:'2024 से', upgradeGold:'गोल्ड में अपग्रेड करें — $4.99/माह', manageSub:'सदस्यता प्रबंधित करें', languageLabel:'भाषा', notifications:'सूचनाएं', paymentMethods:'भुगतान के तरीके', downloads:'डाउनलोड', helpSupport:'सहायता और समर्थन', signOut:'साइन आउट', navHome:'होम', navSearch:'खोजें', navTickets:'टिकट', navProfile:'प्रोफ़ाइल' },
+  'ko-KR': { tagline:'현재 상영중', searchPlaceholder:'영화, 감독, 장르 검색', nowShowingBadge:'현재 상영중', playTrailer:'예고편 재생', trending:'이번 주 인기', seeAll:'전체 보기', watchlist:'내 워치리스트', admitOne:'입장권 — 더 보려면 스크롤', tmdbCredit:'영화 데이터 제공: TMDB', browseGenre:'장르별 찾아보기', browseRegion:'지역별 찾아보기', yourTickets:'내 티켓', upcoming:'예정', past:'지난', freeMember:'무료 회원', goldMember:'골드 회원', sinceLabel:'2024년부터', upgradeGold:'골드로 업그레이드 — 월 $4.99', manageSub:'구독 관리', languageLabel:'언어', notifications:'알림', paymentMethods:'결제 수단', downloads:'다운로드', helpSupport:'도움말 및 지원', signOut:'로그아웃', navHome:'홈', navSearch:'검색', navTickets:'티켓', navProfile:'프로필' },
+  'ja-JP': { tagline:'上映中', searchPlaceholder:'映画、監督、ジャンルを検索', nowShowingBadge:'上映中', playTrailer:'予告編を再生', trending:'今週のトレンド', seeAll:'すべて見る', watchlist:'ウォッチリスト', admitOne:'入場券 — スクロールでもっと見る', tmdbCredit:'映画データ提供:TMDB', browseGenre:'ジャンルで探す', browseRegion:'地域で探す', yourTickets:'チケット', upcoming:'今後', past:'過去', freeMember:'フリー会員', goldMember:'ゴールド会員', sinceLabel:'2024年から', upgradeGold:'ゴールドにアップグレード — 月額$4.99', manageSub:'サブスクリプション管理', languageLabel:'言語', notifications:'通知', paymentMethods:'支払い方法', downloads:'ダウンロード', helpSupport:'ヘルプとサポート', signOut:'サインアウト', navHome:'ホーム', navSearch:'検索', navTickets:'チケット', navProfile:'プロフィール' },
+  'zh-CN': { tagline:'正在上映', searchPlaceholder:'搜索电影、导演、类型', nowShowingBadge:'正在上映', playTrailer:'播放预告片', trending:'本周热门', seeAll:'查看全部', watchlist:'我的片单', admitOne:'入场券 — 向下滑动查看更多', tmdbCredit:'电影数据由 TMDB 提供', browseGenre:'按类型浏览', browseRegion:'按地区浏览', yourTickets:'我的票务', upcoming:'即将', past:'过去', freeMember:'免费会员', goldMember:'黄金会员', sinceLabel:'自2024年', upgradeGold:'升级黄金会员 — 每月$4.99', manageSub:'管理订阅', languageLabel:'语言', notifications:'通知', paymentMethods:'支付方式', downloads:'下载', helpSupport:'帮助与支持', signOut:'退出登录', navHome:'首页', navSearch:'搜索', navTickets:'票务', navProfile:'我的' },
+  'de-DE': { tagline:'jetzt im Kino', searchPlaceholder:'Filme, Regisseure, Genres suchen', nowShowingBadge:'Jetzt im Kino', playTrailer:'Trailer ansehen', trending:'Trends dieser Woche', seeAll:'Alle ansehen', watchlist:'Deine Merkliste', admitOne:'EINTRITTSKARTE — SCROLLEN FÜR MEHR', tmdbCredit:'Filmdaten bereitgestellt von TMDB', browseGenre:'Nach Genre durchsuchen', browseRegion:'Nach Region durchsuchen', yourTickets:'Deine Tickets', upcoming:'Bevorstehend', past:'Vergangen', freeMember:'KOSTENLOSES MITGLIED', goldMember:'GOLD-MITGLIED', sinceLabel:'SEIT 2024', upgradeGold:'Auf Gold upgraden — 4,99 $/Monat', manageSub:'Abo verwalten', languageLabel:'Sprache', notifications:'Benachrichtigungen', paymentMethods:'Zahlungsmethoden', downloads:'Downloads', helpSupport:'Hilfe und Support', signOut:'Abmelden', navHome:'Start', navSearch:'Suche', navTickets:'Tickets', navProfile:'Profil' },
+  'it-IT': { tagline:'ora al cinema', searchPlaceholder:'Cerca film, registi, generi', nowShowingBadge:'Ora al cinema', playTrailer:'Guarda il trailer', trending:'Di tendenza questa settimana', seeAll:'Vedi tutto', watchlist:'La tua lista', admitOne:'BIGLIETTO — SCORRI PER ALTRO', tmdbCredit:'Dati sui film forniti da TMDB', browseGenre:'Sfoglia per genere', browseRegion:'Sfoglia per regione', yourTickets:'I tuoi biglietti', upcoming:'In arrivo', past:'Passati', freeMember:'MEMBRO GRATUITO', goldMember:'MEMBRO GOLD', sinceLabel:'DAL 2024', upgradeGold:'Passa a Gold — $4,99/mese', manageSub:'Gestisci abbonamento', languageLabel:'Lingua', notifications:'Notifiche', paymentMethods:'Metodi di pagamento', downloads:'Download', helpSupport:'Assistenza', signOut:'Esci', navHome:'Home', navSearch:'Cerca', navTickets:'Biglietti', navProfile:'Profilo' },
+  'ru-RU': { tagline:'сейчас в прокате', searchPlaceholder:'Поиск фильмов, режиссёров, жанров', nowShowingBadge:'Сейчас в прокате', playTrailer:'Смотреть трейлер', trending:'В тренде на этой неделе', seeAll:'Смотреть все', watchlist:'Ваш список', admitOne:'БИЛЕТ — ЛИСТАЙТЕ ДАЛЬШЕ', tmdbCredit:'Данные о фильмах предоставлены TMDB', browseGenre:'Обзор по жанру', browseRegion:'Обзор по региону', yourTickets:'Ваши билеты', upcoming:'Предстоящие', past:'Прошедшие', freeMember:'БЕСПЛАТНЫЙ УЧАСТНИК', goldMember:'ЗОЛОТОЙ УЧАСТНИК', sinceLabel:'С 2024 ГОДА', upgradeGold:'Перейти на Gold — $4.99/мес', manageSub:'Управление подпиской', languageLabel:'Язык', notifications:'Уведомления', paymentMethods:'Способы оплаты', downloads:'Загрузки', helpSupport:'Помощь и поддержка', signOut:'Выйти', navHome:'Главная', navSearch:'Поиск', navTickets:'Билеты', navProfile:'Профиль' },
+  'tr-TR': { tagline:'şimdi gösterimde', searchPlaceholder:'Film, yönetmen, tür ara', nowShowingBadge:'Şimdi Gösterimde', playTrailer:'Fragmanı İzle', trending:'Bu Hafta Trend', seeAll:'Tümünü gör', watchlist:'İzleme Listen', admitOne:'GİRİŞ BİLETİ — DAHA FAZLASI İÇİN KAYDIR', tmdbCredit:'Film verileri TMDB tarafından sağlanmaktadır', browseGenre:'Türe Göre Keşfet', browseRegion:'Bölgeye Göre Keşfet', yourTickets:'Biletlerin', upcoming:'Yaklaşan', past:'Geçmiş', freeMember:'ÜCRETSİZ ÜYE', goldMember:'GOLD ÜYE', sinceLabel:"2024'TEN BERİ", upgradeGold:"Gold'a Yükselt — $4.99/ay", manageSub:'Aboneliği Yönet', languageLabel:'Dil', notifications:'Bildirimler', paymentMethods:'Ödeme Yöntemleri', downloads:'İndirilenler', helpSupport:'Yardım ve Destek', signOut:'Çıkış Yap', navHome:'Ana Sayfa', navSearch:'Ara', navTickets:'Biletler', navProfile:'Profil' },
+  'id-ID': { tagline:'sedang tayang', searchPlaceholder:'Cari film, sutradara, genre', nowShowingBadge:'Sedang Tayang', playTrailer:'Putar Trailer', trending:'Trending Minggu Ini', seeAll:'Lihat semua', watchlist:'Daftar Tontonanmu', admitOne:'TIKET MASUK — GESER UNTUK LEBIH BANYAK', tmdbCredit:'Data film disediakan oleh TMDB', browseGenre:'Jelajahi berdasarkan Genre', browseRegion:'Jelajahi berdasarkan Wilayah', yourTickets:'Tiketmu', upcoming:'Mendatang', past:'Lalu', freeMember:'ANGGOTA GRATIS', goldMember:'ANGGOTA GOLD', sinceLabel:'SEJAK 2024', upgradeGold:'Upgrade ke Gold — $4.99/bln', manageSub:'Kelola Langganan', languageLabel:'Bahasa', notifications:'Notifikasi', paymentMethods:'Metode Pembayaran', downloads:'Unduhan', helpSupport:'Bantuan & Dukungan', signOut:'Keluar', navHome:'Beranda', navSearch:'Cari', navTickets:'Tiket', navProfile:'Profil' },
+  'th-TH': { tagline:'กำลังฉาย', searchPlaceholder:'ค้นหาภาพยนตร์ ผู้กำกับ ประเภท', nowShowingBadge:'กำลังฉาย', playTrailer:'เล่นตัวอย่าง', trending:'กำลังนิยมสัปดาห์นี้', seeAll:'ดูทั้งหมด', watchlist:'รายการที่บันทึกไว้', admitOne:'บัตรเข้าชม — เลื่อนดูเพิ่มเติม', tmdbCredit:'ข้อมูลภาพยนตร์จาก TMDB', browseGenre:'เรียกดูตามประเภท', browseRegion:'เรียกดูตามภูมิภาค', yourTickets:'ตั๋วของคุณ', upcoming:'กำลังจะมาถึง', past:'ผ่านมาแล้ว', freeMember:'สมาชิกฟรี', goldMember:'สมาชิกโกลด์', sinceLabel:'ตั้งแต่ 2024', upgradeGold:'อัปเกรดเป็นโกลด์ — $4.99/เดือน', manageSub:'จัดการการสมัครสมาชิก', languageLabel:'ภาษา', notifications:'การแจ้งเตือน', paymentMethods:'วิธีการชำระเงิน', downloads:'ดาวน์โหลด', helpSupport:'ช่วยเหลือและสนับสนุน', signOut:'ออกจากระบบ', navHome:'หน้าแรก', navSearch:'ค้นหา', navTickets:'ตั๋ว', navProfile:'โปรไฟล์' },
+  'vi-VN': { tagline:'đang chiếu', searchPlaceholder:'Tìm phim, đạo diễn, thể loại', nowShowingBadge:'Đang Chiếu', playTrailer:'Xem Trailer', trending:'Thịnh Hành Tuần Này', seeAll:'Xem tất cả', watchlist:'Danh Sách Của Bạn', admitOne:'VÉ VÀO CỬA — CUỘN ĐỂ XEM THÊM', tmdbCredit:'Dữ liệu phim được cung cấp bởi TMDB', browseGenre:'Duyệt Theo Thể Loại', browseRegion:'Duyệt Theo Khu Vực', yourTickets:'Vé Của Bạn', upcoming:'Sắp Tới', past:'Đã Qua', freeMember:'THÀNH VIÊN MIỄN PHÍ', goldMember:'THÀNH VIÊN VÀNG', sinceLabel:'TỪ 2024', upgradeGold:'Nâng Cấp Lên Vàng — $4.99/tháng', manageSub:'Quản Lý Gói Đăng Ký', languageLabel:'Ngôn Ngữ', notifications:'Thông Báo', paymentMethods:'Phương Thức Thanh Toán', downloads:'Tải Xuống', helpSupport:'Trợ Giúp & Hỗ Trợ', signOut:'Đăng Xuất', navHome:'Trang Chủ', navSearch:'Tìm Kiếm', navTickets:'Vé', navProfile:'Hồ Sơ' },
+  'sw-KE': { tagline:'inaonyeshwa sasa', searchPlaceholder:'Tafuta filamu, wakurugenzi, aina', nowShowingBadge:'Inaonyeshwa Sasa', playTrailer:'Cheza Trela', trending:'Maarufu Wiki Hii', seeAll:'Ona zote', watchlist:'Orodha Yako', admitOne:'TIKETI YA KUINGIA — TELEZESHA CHINI KWA ZAIDI', tmdbCredit:'Data ya filamu imetolewa na TMDB', browseGenre:'Vinjari kwa Aina', browseRegion:'Vinjari kwa Eneo', yourTickets:'Tiketi Zako', upcoming:'Zijazo', past:'Zilizopita', freeMember:'MWANACHAMA WA BURE', goldMember:'MWANACHAMA WA DHAHABU', sinceLabel:'TANGU 2024', upgradeGold:'Pandisha hadi Dhahabu — $4.99/mwezi', manageSub:'Simamia Usajili', languageLabel:'Lugha', notifications:'Arifa', paymentMethods:'Njia za Malipo', downloads:'Vipakuliwa', helpSupport:'Msaada na Usaidizi', signOut:'Toka', navHome:'Nyumbani', navSearch:'Tafuta', navTickets:'Tiketi', navProfile:'Wasifu' },
+  'yo-NG': { tagline:'ń hàn nísinsìnyí', searchPlaceholder:'Wa fíìmù, olùdarí, oríṣi', nowShowingBadge:'Ń Hàn Nísinsìnyí', playTrailer:'Ṣe Àfihàn', trending:'Gbajúgbajà Ọ̀sẹ̀ Yìí', seeAll:'Wo gbogbo rẹ̀', watchlist:'Àtòjọ Rẹ', admitOne:'TIKẸ́TI ẸNU-ỌNÀ — YÍYÀ FÚN ÌTẸ̀SÍWÁJÚ', tmdbCredit:'Dátà fíìmù láti ọwọ́ TMDB', browseGenre:'Wo Nípa Oríṣi', browseRegion:'Wo Nípa Agbègbè', yourTickets:'Tikẹ́ti Rẹ', upcoming:'Ń bọ̀', past:'Tí Kọjá', freeMember:'ỌMỌ ẸGBẸ́ ỌFẸ́', goldMember:'ỌMỌ ẸGBẸ́ GOLD', sinceLabel:'LATI 2024', upgradeGold:'Gòkè lọ sí Gold — $4.99/oṣù', manageSub:'Bójútó Ìforúkọsílẹ̀', languageLabel:'Èdè', notifications:'Ìfitónilétí', paymentMethods:'Ọ̀nà Ìsanwó', downloads:'Àwọn Gbígba', helpSupport:'Ìrànlọ́wọ́ àti Ìtìlẹ́yìn', signOut:'Jáde', navHome:'Ilé', navSearch:'Wá', navTickets:'Tikẹ́ti', navProfile:'Profaili' },
+};
+
+function t(key) {
+  return (uiText[TMDB_LANG] && uiText[TMDB_LANG][key]) || uiText['en-US'][key] || key;
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+  renderMembership();
+}
+
+async function tmdb(path) {
+  const sep = path.includes('?') ? '&' : '?';
+  const res = await fetch(`${TMDB_BASE}${path}${sep}api_key=${TMDB_API_KEY}&language=${TMDB_LANG}`);
+  if (!res.ok) throw new Error('TMDB request failed');
+  return res.json();
+}
+
+async function tmdbPages(basePath, pageCount) {
+  const requests = [];
+  for (let p = 1; p <= pageCount; p++) {
+    const sep = basePath.includes('?') ? '&' : '?';
+    requests.push(tmdb(`${basePath}${sep}page=${p}`));
+  }
+  const responses = await Promise.all(requests);
+  return responses.flatMap(r => r.results || []);
+}
+
+function attachGenreNames(movies) {
+  return (movies || []).map(m => ({
+    ...m,
+    genreNames: (m.genre_ids || []).map(id => genreMap[id]).filter(Boolean)
+  }));
+}
+
+let watchlistMap = new Map();
+let recentlyViewed = [];
+
+function isInWatchlist(id) { return watchlistMap.has(id); }
+
+function toggleWatchlistItem(movie) {
+  if (watchlistMap.has(movie.id)) {
+    watchlistMap.delete(movie.id);
+    renderWatchlistRail();
+    return false;
+  }
+  watchlistMap.set(movie.id, movie);
+  renderWatchlistRail();
+  return true;
+}
+
+function renderWatchlistRail() {
+  const rail = document.getElementById('watchlistRail');
+  rail.innerHTML = '';
+  const items = Array.from(watchlistMap.values());
+  if (items.length === 0) {
+    rail.innerHTML = `<div class="rail-empty">${t('watchlistEmpty')}</div>`;
+    return;
+  }
+  items.forEach(m => rail.appendChild(posterCard(m, false)));
+}
+
+function addToRecentlyViewed(movie) {
+  recentlyViewed = recentlyViewed.filter(m => m.id !== movie.id);
+  recentlyViewed.unshift(movie);
+  recentlyViewed = recentlyViewed.slice(0, 10);
+  renderContinueWatchingRail();
+}
+
+function renderContinueWatchingRail() {
+  const rail = document.getElementById('continueRail');
+  rail.innerHTML = '';
+  if (recentlyViewed.length === 0) {
+    rail.innerHTML = `<div class="rail-empty">${t('continueEmpty')}</div>`;
+    return;
+  }
+  recentlyViewed.forEach(m => rail.appendChild(posterCard(m, false)));
+}
+
+function posterCard(m, isGrid) {
+  const card = document.createElement('div');
+  card.className = isGrid ? 'poster grid-poster' : 'poster';
+  const artStyle = m.poster_path
+    ? `background-image:url('${TMDB_IMG}${m.poster_path}'); background-size:cover; background-position:center;`
+    : `background:linear-gradient(150deg, #3a2b1a, #7A1F2B);`;
+  const genreName = (m.genreNames && m.genreNames[0]) || 'Movie';
+  const rating = m.vote_average ? m.vote_average.toFixed(1) : '—';
+  const inList = isInWatchlist(m.id);
+  card.innerHTML = `
+    <div class="poster-art" style="${artStyle}">
+      <div class="bookmark ${inList ? 'added' : ''}">${inList ? '✓' : '+'}</div>
+      <span class="poster-rating">★ ${rating}</span>
+    </div>
+    <div class="poster-name">${m.title}</div>
+    <div class="poster-genre">${genreName}</div>
+  `;
+  const bm = card.querySelector('.bookmark');
+  bm.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const nowAdded = toggleWatchlistItem(m);
+    bm.classList.toggle('added', nowAdded);
+    bm.textContent = nowAdded ? '✓' : '+';
+  });
+  card.addEventListener('click', () => openWatchModal(m));
+  return card;
+}
+
+let currentHeroMovieId = null;
+let currentHeroMovie = null;
+
+async function loadHome() {
+  const trendingRail = document.getElementById('trendingRail');
+  try {
+    const trendingResults = await tmdbPages('/trending/movie/week', 5);
+    const trending = attachGenreNames(trendingResults);
+    trendingRail.innerHTML = '';
+    trending.forEach(m => trendingRail.appendChild(posterCard(m, false)));
+
+    if (trending[0]) {
+      const hero = trending[0];
+      currentHeroMovieId = hero.id;
+      currentHeroMovie = hero;
+      document.querySelector('.hero-title').textContent = hero.title;
+      document.querySelector('.hero-meta').innerHTML =
+        `<span>${(hero.genreNames && hero.genreNames[0]) || 'Movie'}</span>&nbsp;·&nbsp;<span class="stars">★ ${hero.vote_average ? hero.vote_average.toFixed(1) : '—'}</span>`;
+      const heroCard = document.querySelector('.hero-card');
+      if (hero.backdrop_path) {
+        heroCard.style.backgroundImage = `linear-gradient(155deg, rgba(43,15,20,.55) 0%, rgba(43,15,20,.92) 60%, rgba(26,18,16,.97) 100%), url('${TMDB_BACKDROP}${hero.backdrop_path}')`;
+        heroCard.style.backgroundSize = 'cover';
+        heroCard.style.backgroundPosition = 'center';
+      }
+      const heroSaveBtn = document.getElementById('heroSave');
+      const heroInList = isInWatchlist(hero.id);
+      heroSaveBtn.classList.toggle('saved', heroInList);
+      heroSaveBtn.textContent = heroInList ? '✓' : '+';
+    }
+
+    renderWatchlistRail();
+    renderContinueWatchingRail();
+  } catch (e) {
+    trendingRail.innerHTML = '<div class="results-empty">Couldn\'t load movies — check your connection.</div>';
+  }
+}
+
+// ---- Hero save button ----
+document.getElementById('heroSave').addEventListener('click', function () {
+  if (!currentHeroMovie) { showToast('Movie still loading'); return; }
+  const nowAdded = toggleWatchlistItem(currentHeroMovie);
+  this.classList.toggle('saved', nowAdded);
+  this.textContent = nowAdded ? '✓' : '+';
+});
+
+// ---- Gold Membership (Stripe Payment Link) ----
+const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/your_link_here'; // paste your real link here
+const memberTier = document.getElementById('memberTier');
+const upgradeBtn = document.getElementById('upgradeBtn');
+let isGoldMember = false; // later: replace with a real Supabase check
+
+function renderMembership() {
+  memberTier.textContent = isGoldMember ? t('goldMember') : t('freeMember');
+  upgradeBtn.textContent = isGoldMember ? t('manageSub') : t('upgradeGold');
+  upgradeBtn.classList.toggle('is-member', isGoldMember);
+}
+if (new URLSearchParams(window.location.search).get('upgraded') === 'true') {
+  isGoldMember = true;
+}
+renderMembership();
+upgradeBtn.addEventListener('click', () => window.open(STRIPE_PAYMENT_LINK, '_blank'));
+
+// ---- Search screen: real TMDB genres + live search/discover ----
+const chipRow = document.getElementById('genreChips');
+const searchResults = document.getElementById('searchResults');
+const searchInput = document.getElementById('searchInput');
+let activeGenreId = null;
+
+function selectGenre(id, chipEl) {
+  activeGenreId = id;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  chipEl.classList.add('active');
+  renderSearchResults();
+}
+
+async function loadGenres() {
+  const data = await tmdb('/genre/movie/list');
+  data.genres.forEach(g => { genreMap[g.id] = g.name; });
+
+  chipRow.innerHTML = '';
+  const allChip = document.createElement('button');
+  allChip.className = 'chip active';
+  allChip.textContent = 'All';
+  allChip.addEventListener('click', () => selectGenre(null, allChip));
+  chipRow.appendChild(allChip);
+
+  data.genres.forEach(g => {
+    const chip = document.createElement('button');
+    chip.className = 'chip';
+    chip.textContent = g.name;
+    chip.addEventListener('click', () => selectGenre(g.id, chip));
+    chipRow.appendChild(chip);
+  });
+}
+
+// ---- Region browsing (Nollywood, American, Bollywood, Korean, Japanese, Chinese) ----
+const regions = [
+  { label: 'All Regions', code: null },
+  { label: 'Nollywood (Africa)', code: 'NG' },
+  { label: 'American', code: 'US' },
+  { label: 'Bollywood (India)', code: 'IN' },
+  { label: 'Korean', code: 'KR' },
+  { label: 'Japanese', code: 'JP' },
+  { label: 'Chinese', code: 'CN' },
+];
+let activeRegion = null;
+
+function buildRegionChips() {
+  const regionRow = document.getElementById('regionChips');
+  regionRow.innerHTML = '';
+  regions.forEach(r => {
+    const chip = document.createElement('button');
+    chip.className = 'chip' + (r.code === null ? ' active' : '');
+    chip.textContent = r.label;
+    chip.addEventListener('click', () => {
+      activeRegion = r.code;
+      document.querySelectorAll('#regionChips .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      renderSearchResults();
+    });
+    regionRow.appendChild(chip);
+  });
+}
+
+async function renderSearchResults() {
+  const query = searchInput.value.trim();
+  searchResults.innerHTML = '<div class="results-empty">Loading…</div>';
+  try {
+    let data;
+    if (query) {
+      data = await tmdb(`/search/movie?query=${encodeURIComponent(query)}`);
+    } else {
+      let path = '/discover/movie?sort_by=popularity.desc';
+      if (activeGenreId) path += `&with_genres=${activeGenreId}`;
+      if (activeRegion) path += `&with_origin_country=${activeRegion}`;
+      data = await tmdb(path);
+    }
+    let results = attachGenreNames(data.results);
+    if (query && activeGenreId) {
+      results = results.filter(m => (m.genre_ids || []).includes(Number(activeGenreId)));
+    }
+    searchResults.innerHTML = '';
+    if (results.length === 0) {
+      searchResults.innerHTML = '<div class="results-empty">No films match that search.</div>';
+      return;
+    }
+    results.forEach(m => searchResults.appendChild(posterCard(m, true)));
+  } catch (e) {
+    searchResults.innerHTML = '<div class="results-empty">Couldn\'t load results — check your connection.</div>';
+  }
+}
+
+let searchDebounce;
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(renderSearchResults, 350);
+});
+
+// ---- Kick off TMDB data loading ----
+(async function initMovies() {
+  applyTranslations();
+  try {
+    await loadGenres();
+    buildRegionChips();
+    await loadHome();
+    await renderSearchResults();
+  } catch (e) {
+    showToast('Could not load movies — check your connection');
+  }
+})();
+
+document.getElementById('langSelect').addEventListener('change', async (e) => {
+  TMDB_LANG = e.target.value;
+  showToast('Updating language…');
+  applyTranslations();
+  await loadGenres();
+  buildRegionChips();
+  await loadHome();
+  await renderSearchResults();
+});
+
+// ---- Tickets screen ----
+const tickets = {
+  upcoming: [
+    { movie: 'The Last Ember',  date: 'Aug 22', time: '7:40 PM', screen: 'Screen 4', seat: 'F12' },
+    { movie: 'Quiet Machines',  date: 'Aug 29', time: '9:15 PM', screen: 'Screen 1', seat: 'C05' },
+  ],
+  past: [
+    { movie: 'Nocturne',    date: 'Jul 03', time: '6:00 PM', screen: 'Screen 2', seat: 'D08' },
+    { movie: 'Amber Road',  date: 'Jun 19', time: '8:30 PM', screen: 'Screen 3', seat: 'A14' },
+    { movie: 'Ferrous',     date: 'May 27', time: '5:45 PM', screen: 'Screen 5', seat: 'G02' },
+  ]
+};
+const ticketList = document.getElementById('ticketList');
+
+function renderTickets(kind) {
+  ticketList.innerHTML = '';
+  tickets[kind].forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'ticket-card';
+    card.innerHTML = `
+      <div class="ticket-main">
+        <div class="ticket-movie">${t.movie}</div>
+        <div class="ticket-meta">${t.date} · <span>${t.time}</span><br>${t.screen}</div>
+      </div>
+      <div class="ticket-stub">
+        <span class="ticket-seat">${t.seat}</span>
+      </div>
+    `;
+    ticketList.appendChild(card);
+  });
+}
+renderTickets('upcoming');
+
+document.querySelectorAll('.seg-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTickets(btn.dataset.seg);
+  });
+});
+
+// ---- Toast feedback ----
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ---- Play Trailer: fetches the real trailer for the current hero movie ----
+document.querySelector('.btn-play').addEventListener('click', async () => {
+  if (!currentHeroMovieId) {
+    showToast('Movie still loading — try again in a sec');
+    return;
+  }
+  try {
+    const data = await tmdb(`/movie/${currentHeroMovieId}/videos`);
+    const trailer = data.results.find(v => v.type === 'Trailer' && v.site === 'YouTube')
+      || data.results.find(v => v.site === 'YouTube');
+    if (trailer) {
+      window.open(`https://www.youtube.com/watch?v=${trailer.key}&cc_load_policy=1`, '_blank');
+    } else {
+      showToast('No trailer available for this one');
+    }
+  } catch (e) {
+    showToast('Could not load trailer');
+  }
+});
+
+// ---- Where to Watch modal ----
+const modalOverlay = document.getElementById('modalOverlay');
+
+function providerSearchUrl(providerName, title) {
+  const q = encodeURIComponent(title);
+  const name = providerName.toLowerCase();
+  if (name.includes('netflix')) return `https://www.netflix.com/search?q=${q}`;
+  if (name.includes('prime video') || name.includes('amazon')) return `https://www.primevideo.com/search/ref=atv_nb_sr?phrase=${q}`;
+  if (name.includes('disney')) return `https://www.disneyplus.com/search/${q}`;
+  if (name.includes('apple tv')) return `https://tv.apple.com/search?term=${q}`;
+  if (name.includes('hulu')) return `https://www.hulu.com/search?q=${q}`;
+  if (name.includes('max') || name.includes('hbo')) return `https://play.max.com/search?q=${q}`;
+  if (name.includes('paramount')) return `https://www.paramountplus.com/search/?q=${q}`;
+  if (name.includes('peacock')) return `https://www.peacocktv.com/search?q=${q}`;
+  if (name.includes('google play') || name.includes('youtube')) return `https://www.youtube.com/results?search_query=${q}+full+movie`;
+  return null;
+}
+
+async function openWatchModal(movie) {
+  addToRecentlyViewed(movie);
+  document.getElementById('modalTitle').textContent = movie.title;
+  document.getElementById('modalMeta').textContent = (movie.genreNames && movie.genreNames[0]) || '';
+  const posterEl = document.getElementById('modalPoster');
+  posterEl.style.backgroundImage = movie.poster_path ? `url('${TMDB_IMG}${movie.poster_path}')` : 'none';
+  const watchEl = document.getElementById('modalWatch');
+  watchEl.innerHTML = '<div class="results-empty">Loading…</div>';
+  modalOverlay.classList.add('active');
+
+  try {
+    const data = await tmdb(`/movie/${movie.id}/watch/providers`);
+    const region = (data.results && (data.results.NG || data.results.US)) || null;
+    if (!region) {
+      watchEl.innerHTML = '<div class="results-empty">No streaming info available for this title yet.</div>';
+      return;
+    }
+    const section = (label, list) => {
+      if (!list || !list.length) return '';
+      const logos = list.map(p => {
+        const url = providerSearchUrl(p.provider_name, movie.title);
+        const inner = `<img src="https://image.tmdb.org/t/p/w92${p.logo_path}" alt="${p.provider_name}"><span>${p.provider_name}</span>`;
+        return url
+          ? `<a class="provider" href="${url}" target="_blank">${inner}</a>`
+          : `<div class="provider">${inner}</div>`;
+      }).join('');
+      return `<div class="watch-label">${label}</div><div class="provider-row">${logos}</div>`;
+    };
+    let html = section('Stream', region.flatrate) + section('Rent', region.rent) + section('Buy', region.buy);
+    if (!html) html = '<div class="results-empty">No streaming info available for this title yet.</div>';
+    if (region.link) html += `<a href="${region.link}" target="_blank" class="justwatch-link">See full details on JustWatch →</a>`;
+    watchEl.innerHTML = html;
+  } catch (e) {
+    watchEl.innerHTML = '<div class="results-empty">Couldn\'t load streaming info.</div>';
+  }
+}
+
+document.getElementById('modalClose').addEventListener('click', () => {
+  modalOverlay.classList.remove('active');
+});
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) modalOverlay.classList.remove('active');
+});
+
+document.getElementById('heroWatch').addEventListener('click', () => {
+  if (!currentHeroMovie) {
+    showToast('Movie still loading — try again in a sec');
+    return;
+  }
+  openWatchModal(currentHeroMovie);
+});
+
+// ---- Settings items ----
+document.getElementById('notifToggle').addEventListener('change', function () {
+  showToast(this.checked ? 'Notifications on' : 'Notifications off');
+});
+document.getElementById('wifiToggle').addEventListener('change', function () {
+  showToast(this.checked ? 'Wi-Fi only downloads on' : 'Wi-Fi only downloads off');
+});
+document.getElementById('paymentMethodsItem').addEventListener('click', () => {
+  showToast('Managed via Gold Membership above');
+});
+
+// ---- See all: jump to Search tab ----
+document.querySelectorAll('.rail-more').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelector('.nav-item[data-tab="search"]').click();
+  });
+});
+
+// ---- Sign out ----
+document.querySelector('.signout-btn').addEventListener('click', () => {
+  showToast('Signed out');
+});
+
+// ---- Bottom nav: switch active tab + matching screen panel ----
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const tab = item.dataset.tab;
+
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+
+    document.querySelectorAll('.screen-panel').forEach(p => {
+      p.classList.toggle('active', p.dataset.panel === tab);
+    });
+
+    document.querySelector('.search-wrap').classList.toggle('is-hidden', tab !== 'home' && tab !== 'search');
+
+    document.querySelector('.screen').scrollTop = 0;
+    if (tab === 'search') searchInput.focus();
+  });
+});
+
+</script>
+</body>
+</html>
