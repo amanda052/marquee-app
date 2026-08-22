@@ -766,8 +766,8 @@ for (let i = 0; i < 16; i++) {
 }
 
 // ---- TMDB integration ----
-
 const TMDB_BASE = 'https://api.themoviedb.org/3';
+const SUPABASE_FUNCTION = 'https://stlmeaxneobdwwepvhcj.supabase.co/functions/v1/marquee-tmdb';
 const TMDB_IMG = 'https://image.tmdb.org/t/p/w342';
 const TMDB_BACKDROP = 'https://image.tmdb.org/t/p/w780';
 
@@ -809,16 +809,16 @@ function applyTranslations() {
   });
   renderMembership();
 }
+
 async function tmdb(path) {
   const sep = path.includes('?') ? '&' : '?';
   const requestPath = `${path}${sep}language=${encodeURIComponent(TMDB_LANG)}`;
   const res = await fetch(
-    `https://stlmeaxneobdwwepvhcj.supabase.co/functions/v1/marquee-tmdb?path=${encodeURIComponent(requestPath)}`
+    `${SUPABASE_FUNCTION}?path=${encodeURIComponent(requestPath)}`
   );
-  if (!res.ok) throw new Error('TMDB request failed');
+  if (!res.ok) throw new Error(`TMDB request failed (${res.status})`);
   return res.json();
 }
-
 
 async function tmdbPages(basePath, pageCount) {
   const requests = [];
